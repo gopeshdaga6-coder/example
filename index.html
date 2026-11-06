@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quotation Maker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700&family=Source+Serif+4:wght@600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f0;--surface:#fff;--ink:#1c2b2a;--muted:#5d6d6b;--line:#d5dcda;--accent:#0f6b62;--accent-ink:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a19;--surface:#1a2524;--ink:#e6efed;--muted:#9bb0ad;--line:#2d3d3b;--accent:#3fb5a6;--accent-ink:#06201d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121a19;--surface:#1a2524;--ink:#e6efed;--muted:#9bb0ad;--line:#2d3d3b;--accent:#3fb5a6;--accent-ink:#06201d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'Public Sans',system-ui,sans-serif}
+h1,h2,.brand{font-family:'Source Serif 4',Georgia,serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+h1{font-size:26px;margin:0 0 4px}
+h2{font-size:17px;margin:20px 0 8px}
+.sub{color:var(--muted);margin:0 0 8px}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 3px}
+input,textarea,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{border:1px solid var(--line);border-radius:6px;padding:10px;margin-bottom:8px;background:var(--bg)}
+.item .row3{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+@media(max-width:420px){.item .row3{grid-template-columns:1fr 1fr}}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:500}
+.rm{float:right;padding:2px 8px;font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+/* preview */
+.preview{background:#fff;color:#1c2b2a;border:1px solid var(--line);border-radius:8px;padding:28px;min-height:600px;overflow-x:auto}
+.preview .top{display:flex;justify-content:space-between;gap:16px;border-bottom:3px solid #0f6b62;padding-bottom:12px;margin-bottom:16px}
+.preview .brand{font-size:22px;font-weight:700;margin:0}
+.preview .qt{font-family:'Source Serif 4',Georgia,serif;font-size:28px;font-weight:700;color:#0f6b62;text-align:right}
+.preview small{color:#5d6d6b;display:block;white-space:pre-line}
+.meta{display:flex;justify-content:space-between;gap:16px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;margin-top:8px;min-width:420px}
+th{background:#0f6b62;color:#fff;text-align:left;padding:7px 8px;font-weight:500;font-size:13px}
+td{padding:7px 8px;border-bottom:1px solid #d5dcda;vertical-align:top}
+.r{text-align:right}
+.tot{margin:12px 0 0 auto;width:260px}
+.tot div{display:flex;justify-content:space-between;padding:3px 0}
+.tot .g{border-top:2px solid #0f6b62;margin-top:4px;padding-top:6px;font-weight:700;font-size:17px}
+.words{margin-top:10px;color:#5d6d6b;font-size:13px}
+.notes{margin-top:18px;white-space:pre-line;font-size:13px}
+.sign{margin-top:36px;text-align:right;font-size:13px}
+.sigName{font-family:'Dancing Script','Brush Script MT',cursive;font-size:32px;line-height:1.2;margin:10px 0 2px;color:#12305c}
+.sigLine{display:inline-block;border-top:1px solid #1c2b2a;padding-top:3px;min-width:200px}
+@media print{
+ body{background:#fff}.panel,.noprint{display:none!important}
+ .wrap{display:block;padding:0}.preview{border:0;padding:0}
+ th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="panel noprint">
+  <h1>Quotation Maker</h1>
+  <p class="sub">Fill in the details. The quotation updates on the right.</p>
+
+  <h2>Client</h2>
+  <label>Client name</label><input id="cName" value="Client Name">
+  <label>Client address / contact</label><textarea id="cInfo" rows="3"></textarea>
+
+  <h2>Quotation details</h2>
+  <div class="row">
+   <div><label>Quotation no.</label><input id="qNo" value="QT-001"></div>
+   <div><label>Currency</label>
+    <select id="cur"><option value="₹">₹ INR</option><option value="$">$ USD</option><option value="€">€ EUR</option><option value="£">£ GBP</option></select></div>
+   <div style="grid-column:1/-1"><p class="sub" style="margin:4px 0 0">Date is today's date (automatic). Validity is fixed at 7 days.</p></div>
+  </div>
+
+  <h2>Items</h2>
+  <div id="items"></div>
+  <button id="add">Add item</button>
+
+  <div class="row">
+   <div><label>Discount (%)</label><input type="number" id="disc" value="0" min="0" max="100"></div>
+   
+  </div>
+  <label>Terms and notes</label>
+  <textarea id="notes" rows="4">Payment: 50% advance, balance on delivery.
+This quotation is valid for 7 days from the date above.</textarea>
+
+  <div class="actions">
+   <button class="primary" id="print">Download / print PDF</button>
+   <button id="reset">Clear all</button>
+  </div>
+  <p class="sub" style="margin-top:10px;font-size:13px">Your entries are saved in this browser only.</p>
+ </div>
+
+ <div class="preview" id="pv"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const KEY='quotation-maker-v2';
+// Fixed settings: change these here
+const CONFIG={bName:'Asian Color and Pigment',bAddr:'K67/66, Plot No. 8, Mahesh Nagar Colony,\nNati Imli, Varanasi, Uttar Pradesh - 221001',signName:'Neeraj Kumar Daga',validityDays:7,gst:'09AMXPD6176B1ZR',phone:'7905613301',whatsapp:'9369464793',bank:{holder:'ASIAN COLOR AND PIGMENT',name:'Punjab National Bank',acc:'06664011000936',ifsc:'PUNB0066610'}};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const br=it=>{const r=+it.r||0,g=+it.g||0;return it.inc?r/(1+g/100):r};
+const baseTxt=(it,c)=>it.inc&&(+it.r||0)>0?'Rate before GST: '+fmt(br(it),c):'';
+function dates(){const t=new Date(),v=new Date(t.getTime()+CONFIG.validityDays*864e5);return{t:ymd(t),v:ymd(v)}}
+let items=[{d:'',q:1,r:'',g:'',inc:false}];
+const fields=['cName','cInfo','qNo','cur','disc','notes'];
+
+function load(){
+ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(s){fields.forEach(f=>{if(s[f]!==undefined)$(f).value=s[f]});if(s.items)items=s.items.map(it=>({g:'',...it}))}}catch(e){}
+}
+function save(){
+ try{const s={items};fields.forEach(f=>s[f]=$(f).value);localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(n,c)=>c+n.toLocaleString(c==='₹'?'en-IN':'en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fd=v=>v?new Date(v+'T00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
+
+function renderForm(){
+ $('items').innerHTML=items.map((it,i)=>`
+  <div class="item">
+   <button class="rm" data-rm="${i}" aria-label="Remove item">Remove</button>
+   <label>Description</label><input data-i="${i}" data-k="d" value="${esc(it.d)}">
+   <div class="row3">
+    <div><label>Qty</label><input type="number" min="0" data-i="${i}" data-k="q" value="${it.q}"></div>
+    <div><label>Rate</label><input type="number" min="0" data-i="${i}" data-k="r" value="${it.r}"></div>
+    <div><label>GST %</label><input type="number" min="0" data-i="${i}" data-k="g" value="${it.g??''}"></div>
+    <div><label>Amount (before GST)</label><input disabled id="amt${i}" value="${((+it.q||0)*br(it)).toFixed(2)}"></div>
+   </div>
+   <label style="display:flex;gap:8px;align-items:center;margin-top:8px;color:var(--ink)"><input type="checkbox" style="width:auto" data-i="${i}" data-k="inc" ${it.inc?'checked':''}> Rate already includes GST</label>
+   <div class="sub" id="base${i}" style="margin:4px 0 0;font-size:13px">${baseTxt(it,$('cur').value)}</div>
+  </div>`).join('');
+}
+function preview(){
+ const c=$('cur').value;const D=dates();
+ const sub=items.reduce((a,it)=>a+(+it.q||0)*br(it),0);
+ const dp=+$('disc').value||0;
+ const dAmt=sub*dp/100, taxable=sub-dAmt;
+ const gm={};items.forEach(it=>{const g=+it.g||0;const t=(+it.q||0)*br(it)*(1-dp/100);gm[g]=(gm[g]||0)+t*g/100});
+ const tAmt=Object.values(gm).reduce((a,b)=>a+b,0), total=taxable+tAmt;
+ $('pv').innerHTML=`
+  <div class="top">
+   <div><p class="brand">${esc(CONFIG.bName)}</p><small>${esc(CONFIG.bAddr)}\nGSTIN: ${esc(CONFIG.gst)}\nPhone: ${esc(CONFIG.phone)}  |  WhatsApp: ${esc(CONFIG.whatsapp)}</small></div>
+   <div><div class="qt">QUOTATION</div><small style="text-align:right">No: ${esc($('qNo').value)}\nDate: ${fd(D.t)}\nValid for ${CONFIG.validityDays} days, until ${fd(D.v)}</small></div>
+  </div>
+  <div class="meta"><div><small>Prepared for</small><strong>${esc($('cName').value)}</strong><small>${esc($('cInfo').value)}</small></div></div>
+  <table><thead><tr><th>#</th><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">GST</th><th class="r">Amount</th></tr></thead><tbody>
+  ${items.map((it,i)=>`<tr><td>${i+1}</td><td>${esc(it.d)}</td><td class="r">${+it.q||0}</td><td class="r">${fmt(br(it),c)}</td><td class="r">${+it.g||0}%</td><td class="r">${fmt((+it.q||0)*br(it),c)}</td></tr>`).join('')}
+  </tbody></table>
+  <div class="tot">
+   <div><span>Subtotal</span><span>${fmt(sub,c)}</span></div>
+   ${dp?`<div><span>Discount (${dp}%)</span><span>-${fmt(dAmt,c)}</span></div>`:''}
+   ${Object.keys(gm).map(Number).sort((a,b)=>a-b).filter(g=>g>0).map(g=>`<div><span>GST @${g}%</span><span>${fmt(gm[g],c)}</span></div>`).join('')}
+   <div class="g"><span>Total</span><span>${fmt(total,c)}</span></div>
+  </div>
+  <div class="notes"><strong>Terms and notes</strong>\n${esc($('notes').value)}</div>
+  <div class="notes"><strong>Bank details</strong>\nAccount name: ${esc(CONFIG.bank.holder)}\nBank: ${esc(CONFIG.bank.name)}\nAccount no: ${esc(CONFIG.bank.acc)}\nIFSC: ${esc(CONFIG.bank.ifsc)}</div>
+  <div class="sign">For ${esc(CONFIG.bName)}<br><br><br><strong>${esc(CONFIG.signName)}</strong><br>Authorised signatory</div>`;
+}
+function refresh(){preview();save()}
+
+document.addEventListener('input',e=>{
+ const t=e.target;
+ if(t.dataset.i!==undefined){const it=items[t.dataset.i];it[t.dataset.k]=t.type==='checkbox'?t.checked:t.value;
+  const a=$('amt'+t.dataset.i);if(a)a.value=((+it.q||0)*br(it)).toFixed(2);
+  const b=$('base'+t.dataset.i);if(b)b.textContent=baseTxt(it,$('cur').value)}
+ refresh();
+});
+document.addEventListener('click',e=>{
+ if(e.target.dataset.rm!==undefined){items.splice(+e.target.dataset.rm,1);renderForm();refresh()}
+});
+$('add').onclick=()=>{items.push({d:'',q:1,r:'',g:'',inc:false});renderForm();refresh()};
+$('print').onclick=()=>window.print();
+$('reset').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){};location.reload()};
+
+load();renderForm();preview();
+</script>
+</body>
+</html>
